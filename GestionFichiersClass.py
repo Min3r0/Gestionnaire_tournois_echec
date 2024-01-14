@@ -1,13 +1,13 @@
 import json
 
 
-class GestionFichiers:
+class FileManagement:
     @staticmethod
-    def sauvegarder_joueurs(joueurs):
+    def save_players(joueurs):
         with open('joueurs.json', 'w') as fichier:
             json.dump(joueurs, fichier, default=lambda obj: obj.__dict__)
 
     @staticmethod
-    def sauvegarder_tournois(tournois):
+    def save_tournaments(tournois):
         with open('tournois.json', 'w') as fichier:
             json.dump(tournois, fichier, default=lambda obj: obj.__dict__)

@@ -1,11 +1,11 @@
 class Match:
-    def __init__(self, joueur1, joueur2, resultat=None):
-        self.joueur1 = joueur1
-        self.joueur2 = joueur2
-        self.resultat = resultat  # Peut être None si le match n'a pas encore été joué
+    def __init__(self, player1, player2, result=None):
+        self.player1 = player1
+        self.player2 = player2
+        self.result = result  # Peut être None si le match n'a pas encore été joué
 
-    def enregistrer_resultat(self, resultat):
-        self.resultat = resultat
+    def register_result(self, result):
+        self.result = result
 
     def __repr__(self):
-        return f"Match entre {self.joueur1} et {self.joueur2}, résultat: {self.resultat}"
+        return f"Match entre {self.player1} et {self.player2}, résultat: {self.result}"
