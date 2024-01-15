@@ -1,6 +1,6 @@
 import csv
 
-from ChargementFichiersClass import LoadingFiles
+from LoadingFilesClass import LoadingFiles
 
 
 def exporter_resultats_csv():

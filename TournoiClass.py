@@ -1,5 +1,5 @@
 class Tournament:
-    def __init__(self, name, date):
+    def __init__(self, name, date, participants_players=None, matchs=None):
         self.name = name
         self.date = date
         self.participants_players = []  # Liste des identifiants des joueurs participants

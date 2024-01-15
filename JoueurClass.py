@@ -1,16 +1,16 @@
 class Player:
-    def __init__(self, identifiant, nom, prenom, date_naissance, classement_elo):
-        self.identifiant = identifiant
-        self.nom = nom
-        self.prenom = prenom
-        self.date_naissance = date_naissance
-        self.classement_elo = classement_elo
+    def __init__(self, ID, name, firstname, birthdate, elo_ranking):
+        self.ID = ID
+        self.name = name
+        self.firstname = firstname
+        self.birthdate = birthdate
+        self.elo_ranking = elo_ranking
 
-    def modifier_joueur(self, nom, prenom, date_naissance, classement_elo):
-        self.nom = nom
-        self.prenom = prenom
-        self.date_naissance = date_naissance
-        self.classement_elo = classement_elo
+    def modifier_joueur(self, name, firstname, birthdate, elo_ranking):
+        self.name = name
+        self.firstname = firstname
+        self.birthdate = birthdate
+        self.elo_ranking = elo_ranking
 
     def __repr__(self):
-        return f"Joueur {self.identifiant}: {self.prenom} {self.nom}, né le {self.date_naissance}, Elo: {self.classement_elo}"
+        return f"Joueur {self.ID}: {self.firstname} {self.name}, né le {self.birthdate}, Elo: {self.elo_ranking}"

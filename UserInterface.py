@@ -1,6 +1,8 @@
+import MatchClass
 import Verification
+import display
 import export_result
-from ChargementFichiersClass import LoadingFiles
+from LoadingFilesClass import LoadingFiles
 from GestionFichiersClass import FileManagement
 from JoueurClass import Player
 from TournoiClass import Tournament
@@ -10,18 +12,25 @@ from Verification import check_format_date, verif_score
 class UserInterface:
     @staticmethod
     def display_menu():
-        print("Bienvenue dans le gestionnaire de tournois d'échecs")
-        print("1. Ajouter un joueur")
-        print("2. Créer un tournoi")
-        print("3. Enregistrer un résultat de match")
-        print("4. Exporter les résultats d'un tournoi au format CSV")
-        print("5. Quitter")
+        print("""
+        Bienvenue dans le gestionnaire de tournois d'échecs
+        1. Créer un joueur
+        2. Créer un tournoi
+        3. Enregistrer un joueur dans un tournois
+        4. Créer un match
+        5. Enregistrer un résultat de match
+        6. Exporter les résultats d'un tournoi au format CSV
+        7. Voir la liste des joueurs
+        8. Quitter
+        """)
 
     @staticmethod
     def add_player():
         global birth_date, elo_ranking
         name = input("Entrez le nom du joueur: ")
+        name = name.upper()
         firstname = input("Entrez le prénom du joueur: ")
+        firstname = firstname.capitalize()
 
         date_verification = False
         while not date_verification:
@@ -46,11 +55,20 @@ class UserInterface:
             except ValueError:
                 print("Veuillez entrer un nombre entier pour le classement Elo.")
 
-        player = LoadingFiles.charger_joueurs()
+        player = LoadingFiles.load_players()
         identifier = len(player) + 1
         new_player = Player(identifier, name, firstname, birth_date, elo_ranking)
         player.append(new_player)
         FileManagement.save_players(player)
+
+    @staticmethod
+    def find_player_by_name(player_name):
+        players = LoadingFiles.load_players()
+        for player in players:
+            if f"{player.nom} {player.prenom}" == player_name:
+                return player
+        return None
+
 
     @staticmethod
     def create_tournament():
@@ -68,6 +86,68 @@ class UserInterface:
         new_tournament = Tournament(tournament_name, date_tournament)
         tournament.append(new_tournament)
         FileManagement.save_tournaments(tournament)
+
+    @staticmethod
+    def add_player_to_tournament():
+        display.display_tournament()
+        tournament_name = input("Dans quel tournoi voulez-vous ajouter un joueur : ")
+        tournaments = LoadingFiles.load_tournaments()
+
+        selected_tournament = None
+        for tournament in tournaments:
+            if tournament.name == tournament_name:
+                selected_tournament = tournament
+                break
+        if selected_tournament is None:
+            print(f"Aucun tournoi trouvé avec le nom {tournament_name}.")
+            return
+
+        display.display_player()
+        player_name = input("Entrez le nom du joueur à ajouter : ")
+        player = UserInterface.find_player_by_name(player_name)
+        if player is None:
+            print(f"Aucun joueur trouvé avec le nom {player_name}.")
+            return
+
+        selected_tournament.add_player(player)
+        FileManagement.save_tournaments(tournaments)
+        print(f"Le joueur {player.nom} {player.prenom} a été ajouté au tournoi {selected_tournament.nom}.")
+
+    @staticmethod
+    def create_match():
+        display.display_tournament()
+        tournament_name = input("Dans quel tournoi voulez-vous créer le match : ")
+        tournaments = LoadingFiles.load_tournaments()
+
+        selected_tournament = None
+        for tournament in tournaments:
+            if tournament.nom == tournament_name:
+                selected_tournament = tournament
+                break
+
+        if selected_tournament is None:
+            print(f"Aucun tournoi trouvé avec le nom {tournament_name}.")
+            return
+
+        display.display_players_of_tournament(selected_tournament)
+
+        player1_name = input("Entrez le nom du joueur 1 : ")
+        player2_name = input("Entrez le nom du joueur 2 : ")
+        player1 = UserInterface.find_player_by_name(player1_name)
+        player2 = UserInterface.find_player_by_name(player2_name)
+
+        if player1 is None or player2 is None:
+            print("Un ou plusieurs joueurs ne sont pas trouvés.")
+            return
+
+        # Créer un nouveau match
+        new_match = MatchClass.Match(player1, player2)
+
+        # Ajouter le match à la liste des matchs du tournoi
+        selected_tournament.add_match(new_match)
+
+        # Sauvegarder les tournois mis à jour dans le fichier tournois.json
+        FileManagement.save_tournaments(tournaments)
 
     @staticmethod
     def register_match_result():
@@ -119,10 +199,17 @@ if __name__ == "__main__":
         elif choice == "2":
             UserInterface.create_tournament()
         elif choice == "3":
-            UserInterface.register_match_result()
+            UserInterface.add_player_to_tournament()
         elif choice == "4":
-            export_result.exporter_resultats_csv()
+            UserInterface.create_match()
         elif choice == "5":
+            UserInterface.register_match_result()
+        elif choice == "6":
+            export_result.exporter_resultats_csv()
+        elif choice == "7":
+            display.display_player()
+        elif choice == "8":
+            print("Fin du programme merci et à bientôt")
             break
         else:
             print("Choix invalide. Veuillez sélectionner une option valide.")

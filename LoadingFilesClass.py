@@ -6,7 +6,7 @@ from TournoiClass import Tournament
 
 class LoadingFiles:
     @staticmethod
-    def charger_joueurs():
+    def load_players():
         try:
             with open('joueurs.json', 'r') as fichier:
                 joueurs_data = json.load(fichier)
@@ -24,3 +24,5 @@ class LoadingFiles:
                 return tournois
         except FileNotFoundError:
             return []
+
+

@@ -1,29 +1,31 @@
 import re
 
-from ChargementFichiersClass import LoadingFiles
+from LoadingFilesClass import LoadingFiles
 
 
-def check_format_date(chaine):
-    pattern = r'^\d{4}-\d{2}-\d{2}$'  # Modèle AAAA-MM-JJ
-    if re.match(pattern, chaine):
+def check_format_date(chain):
+    pattern = r'^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$'  # Modèle AAAA-MM-JJ
+    if re.match(pattern, chain):
         return True
     else:
         return False
 
 
-def verif_score(chaine):
-    chaines_acceptees = ["1-0", "0.5-0.5", "0-1"]
-    if chaine in chaines_acceptees:
+def verif_score(chain):
+    accepted_strings = ["1-0", "0.5-0.5", "0-1"]
+    if chain in accepted_strings:
         return True
     else:
         return False
 
 
-def player_already_exists(nom, prenom, date_naissance):
-    joueurs = LoadingFiles.charger_joueurs()
-
-    for joueur in joueurs:
-        if joueur.name == nom and joueur.prenom == prenom and joueur.date_naissance == date_naissance:
-            return True
+def player_already_exists(name, firstname, birthdate):
+    players = LoadingFiles.load_players()
+    if not players:
+        return False
+    else:
+        for player in players:
+            if (player.name == name and player.firstname == firstname and player.birthdate == birthdate):
+                return True
 
     return False
