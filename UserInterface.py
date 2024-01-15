@@ -61,14 +61,15 @@ class UserInterface:
         player.append(new_player)
         FileManagement.save_players(player)
 
+
     @staticmethod
-    def find_player_by_name(player_name):
+    def find_player_by_id(player_id):
         players = LoadingFiles.load_players()
+        player_id = int(player_id)
         for player in players:
-            if f"{player.nom} {player.prenom}" == player_name:
+            if player.ID == player_id:
                 return player
         return None
-
 
     @staticmethod
     def create_tournament():
@@ -103,15 +104,15 @@ class UserInterface:
             return
 
         display.display_player()
-        player_name = input("Entrez le nom du joueur à ajouter : ")
-        player = UserInterface.find_player_by_name(player_name)
+        player_id = input("Entrez l'ID du joueur à ajouter : ")
+        player = UserInterface.find_player_by_id(player_id)
         if player is None:
-            print(f"Aucun joueur trouvé avec le nom {player_name}.")
+            print(f"Aucun joueur trouvé avec le nom {player_id}.")
             return
 
         selected_tournament.add_player(player)
         FileManagement.save_tournaments(tournaments)
-        print(f"Le joueur {player.nom} {player.prenom} a été ajouté au tournoi {selected_tournament.nom}.")
+        print(f"Le joueur {player.name} {player.firstname} a été ajouté au tournoi {selected_tournament.name}.")
 
     @staticmethod
     def create_match():
@@ -121,7 +122,7 @@ class UserInterface:
 
         selected_tournament = None
         for tournament in tournaments:
-            if tournament.nom == tournament_name:
+            if tournament.name == tournament_name:
                 selected_tournament = tournament
                 break
 
@@ -131,10 +132,10 @@ class UserInterface:
 
         display.display_players_of_tournament(selected_tournament)
 
-        player1_name = input("Entrez le nom du joueur 1 : ")
-        player2_name = input("Entrez le nom du joueur 2 : ")
-        player1 = UserInterface.find_player_by_name(player1_name)
-        player2 = UserInterface.find_player_by_name(player2_name)
+        player1_name = input("Entrez l'ID du joueur 1 : ")
+        player2_name = input("Entrez l'ID du joueur 2 : ")
+        player1 = UserInterface.find_player_by_id(player1_name)
+        player2 = UserInterface.find_player_by_id(player2_name)
 
         if player1 is None or player2 is None:
             print("Un ou plusieurs joueurs ne sont pas trouvés.")
@@ -152,19 +153,20 @@ class UserInterface:
     @staticmethod
     def register_match_result():
         global selected_tournament, selected_match, result
-        tournament = LoadingFiles.load_tournaments()
+        tournaments = LoadingFiles.load_tournaments()
 
-        print("Liste des tournament disponibles :")
-        for index, tournament in enumerate(tournament, start=1):
+        print("Liste des tournois disponibles :")
+        for index, tournament in enumerate(tournaments, start=1):
             print(f"{index}. {tournament.name}")
 
         enter_check = False
         while not enter_check:
             tournament_choice = int(input("Sélectionnez un tournoi (entrez le numéro) : ")) - 1
-            if 0 <= tournament_choice < len(tournament):
-                selected_tournament = tournament[tournament_choice]
+            if 0 <= tournament_choice < len(tournaments):
+                selected_tournament = tournaments[tournament_choice]
                 enter_check = True
-            print("L'entrer n'est pas bonne")
+            else:
+                print("L'entrée n'est pas bonne")
 
         print(f"Matchs du tournoi {selected_tournament.name} :")
         for index, match in enumerate(selected_tournament.matchs, start=1):
@@ -172,21 +174,26 @@ class UserInterface:
 
         enter_check = False
         while not enter_check:
-            tournament_choice = int(input("Sélectionnez un match à enregistrer (entrez le numéro) : ")) - 1
-            if 0 <= tournament_choice < len(selected_tournament.matchs):
-                selected_match = selected_tournament.matchs[tournament_choice]
+            match_choice = int(input("Sélectionnez un match à enregistrer (entrez le numéro) : ")) - 1
+            if 0 <= match_choice < len(selected_tournament.matchs):
+                selected_match = selected_tournament.matchs[match_choice]
                 enter_check = True
-            print("L'entrer n'est pas bonne")
+            else:
+                print("L'entrée n'est pas bonne")
 
         enter_check = False
         while not enter_check:
             result = input("Entrez le résultat du match (1-0, 0.5-0.5, 0-1) : ")
-            enter_check = verif_score
+            enter_check = verif_score(result)
             if not enter_check:
-                print("L'entrer n'est pas bonne")
+                print("L'entrée n'est pas bonne")
 
-        selected_match.register_result(result)
-        FileManagement.save_tournaments(tournament)
+        # Assurez-vous que selected_match est une instance de la classe Match
+        if isinstance(selected_match, MatchClass.Match):
+            selected_match.register_result(result)
+            FileManagement.save_tournaments(tournaments)
+        else:
+            print("Erreur : le match sélectionné n'est pas valide.")
 
 
 if __name__ == "__main__":

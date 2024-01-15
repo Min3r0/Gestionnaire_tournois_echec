@@ -24,9 +24,9 @@ def display_tournament():
 
 
 def display_players_of_tournament(selected_tournament):
-    if not selected_tournament.joueurs_participants:
-        print(f"Aucun joueur n'est inscrit au tournoi {selected_tournament.nom}.")
+    if not selected_tournament.participants_players:
+        print(f"Aucun joueur n'est inscrit au tournoi {selected_tournament.name}.")
     else:
-        print(f"Joueurs inscrits au tournoi {selected_tournament.nom} :")
-        for joueur in selected_tournament.joueurs_participants:
-            print(f"{joueur.nom} {joueur.prenom} - Classement Elo : {joueur.classement_elo}")
+        print(f"Joueurs inscrits au tournoi {selected_tournament.name} :")
+        for joueur in selected_tournament.participants_players:
+            print(joueur)
